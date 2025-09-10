@@ -55,7 +55,7 @@ export class RegistroPage implements OnInit {
     private formBuilder: FormBuilder,
     private alertController: AlertController,
     private navCtrl: NavController,
-    private usuarioService: UsuarioService // Inyecta el servicio
+    private usuarioService: UsuarioService
   ) {
     this.registerForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -73,7 +73,7 @@ export class RegistroPage implements OnInit {
         nombre: this.registerForm.value.name,
         email: this.registerForm.value.email,
         password: this.registerForm.value.password,
-        rol: 'USER' // puedes asignar un rol por defecto
+        rol: 'USER'
       };
 
       this.usuarioService.createUsuario(nuevoUsuario).subscribe({

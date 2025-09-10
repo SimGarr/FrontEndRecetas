@@ -1,6 +1,5 @@
 <ion-content>
   <div class="contenedor-login">
-    <!-- Header con logo -->
     <div class="seccion-header">
       <div class="contenedor-logo">
         <img src="../../assets/img/image.png" alt="Logo" class="img-logo" />
@@ -9,7 +8,6 @@
       </div>
     </div>
 
-    <!-- Formulario de recuperar contraseña -->
     <form (submit)="recuperarContrasena()" class="form-login">
       <ion-item class="input-personalizado">
         <ion-icon name="mail-outline" slot="start"></ion-icon>
@@ -28,7 +26,6 @@
       </ion-button>
     </form>
 
-    <!-- Volver al login -->
     <div class="seccion-registro">
       <ion-button type="button" expand="block" fill="outline" (click)="irALogin()">
         <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
@@ -36,13 +33,11 @@
       </ion-button>
     </div>
 
-    <!-- Info -->
     <div class="info-version">
       <span>Versión 1.0.0</span>
     </div>
   </div>
 
-  <!-- Toast de confirmación -->
   <ion-toast
     [isOpen]="toastAbierto"
     message="Si el correo existe, recibirás un enlace de recuperación."

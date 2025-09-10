@@ -1,8 +1,8 @@
 export interface Usuario {
-  id?: number;          // opcional, lo genera el backend
+  id?: number;
   nombre: string;
   email: string;
   password: string;
-  rol?: string;         // opcional, si manejas roles
-  fechaRegistro?: string; 
+  rol?: string;
+  fechaRegistro?: string;
 }

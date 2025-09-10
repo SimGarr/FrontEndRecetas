@@ -83,7 +83,7 @@ import { Router } from '@angular/router';
 })
 export class RecetasPage implements OnInit {
 
-  userName: string = localStorage.getItem('userName') || 'Invitado';
+   userName: string | null = null;
 
   constructor(private router: Router) {
     addIcons({
@@ -108,27 +108,24 @@ export class RecetasPage implements OnInit {
   }
 
   ngOnInit() {
-    // Leer nombre desde localStorage al iniciar la página
-    const storedName = localStorage.getItem('userName');
-    if (storedName) {
-      this.userName = storedName;
-    }
+  
+    this.userName = localStorage.getItem('userName');
   }
 
-  // Métodos simulados de navegación
-  goToProfile() { console.log('Ir a perfil'); }
-  goToSettings() { console.log('Ir a ajustes'); }
-  goToFollowers() { console.log('Ir a seguidores'); }
-  goToStats() { console.log('Ir a estadísticas'); }
-  goToFAQ() { console.log('Ir a preguntas frecuentes'); }
-  sendFeedback() { console.log('Enviar opinión'); }
-  goToVisitedRecipes() { console.log('Ir a recetas visitadas'); }
+ 
+  IrPerfil() { console.log('Ir a perfil'); }
+  IrAjustes() { console.log('Ir a ajustes'); }
+  IrSeguidores() { console.log('Ir a seguidores'); }
+  IrEstadisticas() { console.log('Ir a estadísticas'); }
+  IrPreguntasFrecuentes() { console.log('Ir a preguntas frecuentes'); }
+  EnviarOpinion() { console.log('Enviar opinión'); }
+  IrRecetasVisitadas() { console.log('Ir a recetas visitadas'); }
 
   logout() {
     console.log('Cerrando sesión');
     localStorage.removeItem('userLoggedIn');
     localStorage.removeItem('userEmail');
-    localStorage.removeItem('userName'); // Limpiar el nombre también
+    localStorage.removeItem('userName');
     this.router.navigateByUrl('/login');
   }
 }
