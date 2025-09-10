@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Registro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="header-section">
+    <div class="logo-container">
+      <ion-icon name="restaurant" class="logo-icon"></ion-icon>
+    </div>
+  </div>
+  
+  <div class="form-container">
+    <div class="welcome-text">
+      <h2>Únete a nuestra comunidad</h2>
+      <p>Descubre miles de recetas y comparte las tuyas</p>
+    </div>
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <ion-list>
+        <ion-item>
+          <ion-label position="stacked">Nombre completo</ion-label>
+          <ion-input type="text" formControlName="name" placeholder="Ingresa tu nombre"></ion-input>
+        </ion-item>
+        <div class="validation-error" *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.errors?.['required']">
+          El nombre es obligatorio
+        </div>
+        
+        <ion-item>
+          <ion-label position="stacked">Correo electrónico</ion-label>
+          <ion-input type="email" formControlName="email" placeholder="ejemplo@correo.com"></ion-input>
+        </ion-item>
+        <div class="validation-error" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['required']">
+          El email es obligatorio
+        </div>
+        <div class="validation-error" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['email']">
+          Introduce un email válido
+        </div>
+        
+        <ion-item>
+          <ion-label position="stacked">Contraseña</ion-label>
+          <ion-input type="password" formControlName="password" placeholder="Mínimo 6 caracteres"></ion-input>
+        </ion-item>
+        <div class="validation-error" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['required']">
+          La contraseña es obligatoria
+        </div>
+        <div class="validation-error" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['minlength']">
+          La contraseña debe tener al menos 6 caracteres
+        </div>
+        
+        <ion-item>
+          <ion-label position="stacked">Confirmar contraseña</ion-label>
+          <ion-input type="password" formControlName="confirmPassword" placeholder="Repite tu contraseña"></ion-input>
+        </ion-item>
+        <div class="validation-error" *ngIf="registerForm.get('confirmPassword')?.touched && registerForm.hasError('passwordsMismatch')">
+          Las contraseñas no coinciden
+        </div>
+      </ion-list>
+      
+      <div class="terms-text">
+        Al registrarte, aceptas nuestros Términos de servicio y Política de privacidad
+      </div>
+      
+      <ion-button expand="block" type="submit" [disabled]="!registerForm.valid">
+        Crear cuenta
+      </ion-button>
+    </form>
+    
+    <div class="login-redirect">
+      ¿Ya tienes una cuenta? <a (click)="IrLogin()">Inicia sesión</a>
+    </div>
+  </div>
+  
+  <div class="success-message" *ngIf="registrationSuccess">
+    <ion-icon name="checkmark-circle" class="chef-icon"></ion-icon>
+    <h3>¡Registro exitoso!</h3>
+    <p>Bienvenido a nuestra comunidad de amantes de la cocina</p>
+    <ion-button expand="block" color="secondary" (click)="IrRecetas()">
+      Ver recetas
+    </ion-button>
+  </div>
+</ion-content>

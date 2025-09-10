@@ -1,0 +1,231 @@
+<ion-app>
+  <ion-menu contentId="main-content" class="custom-menu">
+    <ion-header>
+      <ion-toolbar class="menu-header">
+        <div class="user-profile">
+          <ion-avatar class="user-avatar">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" />
+          </ion-avatar>
+          <div class="user-info">
+            <h3>{{ userName }}</h3>
+            <p>Chef aficionado</p>
+          </div>
+        </div>
+      </ion-toolbar>
+    </ion-header>
+    
+    <ion-content class="menu-content">
+      <ion-list lines="none" class="menu-list">
+        <ion-item button (click)="goToProfile()" class="menu-item">
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-label>Mi Perfil</ion-label>
+        </ion-item>
+        
+        <ion-item button (click)="goToStats()" class="menu-item">
+          <ion-icon name="stats-chart-outline" slot="start"></ion-icon>
+          <ion-label>Estadísticas</ion-label>
+        </ion-item>
+        
+        <ion-item button (click)="goToFollowers()" class="menu-item">
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          <ion-label>Seguidores</ion-label>
+          <ion-badge color="primary" slot="end">128</ion-badge>
+        </ion-item>
+        
+        <ion-item button (click)="goToVisitedRecipes()" class="menu-item">
+          <ion-icon name="book-outline" slot="start"></ion-icon>
+          <ion-label>Recetas Visitadas</ion-label>
+          <ion-badge color="secondary" slot="end">42</ion-badge>
+        </ion-item>
+        
+        <ion-item button (click)="goToSettings()" class="menu-item">
+          <ion-icon name="settings-outline" slot="start"></ion-icon>
+          <ion-label>Ajustes</ion-label>
+        </ion-item>
+        
+        <ion-item button (click)="goToFAQ()" class="menu-item">
+          <ion-icon name="help-circle-outline" slot="start"></ion-icon>
+          <ion-label>Preguntas Frecuentes</ion-label>
+        </ion-item>
+        
+        <ion-item button (click)="sendFeedback()" class="menu-item">
+          <ion-icon name="chatbox-ellipses-outline" slot="start"></ion-icon>
+          <ion-label>Enviar Opinión</ion-label>
+        </ion-item>
+        
+        <ion-item button (click)="logout()" class="menu-item logout-item">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          <ion-label>Cerrar Sesión</ion-label>
+        </ion-item>
+      </ion-list>
+      
+      <div class="menu-footer">
+        <p>Sabores & Recetas v1.0.0</p>
+      </div>
+    </ion-content>
+  </ion-menu>
+  
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+  
+  <ion-header>
+    <ion-toolbar class="main-header">
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Inicio</ion-title>
+      <ion-buttons slot="end">
+        <ion-button>
+          <ion-icon name="notifications-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content class="main-content">
+    <div class="welcome-section">
+      <h1>¡Bienvenido</h1>
+      <p>¿Qué vas a cocinar hoy?</p>
+    </div>
+    
+    <div class="search-section">
+      <ion-searchbar placeholder="Buscar recetas..." animated></ion-searchbar>
+    </div>
+    
+    <div class="categories-section">
+      <h2>Categorías</h2>
+      <div class="categories-scroll">
+        <ion-chip class="category-chip" color="primary" outline>
+          <ion-icon name="fast-food-outline"></ion-icon>
+          <ion-label>Entradas</ion-label>
+        </ion-chip>
+        <ion-chip class="category-chip" color="secondary" outline>
+          <ion-icon name="fish-outline"></ion-icon>
+          <ion-label>Platos Principales</ion-label>
+        </ion-chip>
+        <ion-chip class="category-chip" color="tertiary" outline>
+          <ion-icon name="ice-cream-outline"></ion-icon>
+          <ion-label>Postres</ion-label>
+        </ion-chip>
+        <ion-chip class="category-chip" color="success" outline>
+          <ion-icon name="cafe-outline"></ion-icon>
+          <ion-label>Bebidas</ion-label>
+        </ion-chip>
+        <ion-chip class="category-chip" color="warning" outline>
+          <ion-icon name="flame-outline"></ion-icon>
+          <ion-label>Asados</ion-label>
+        </ion-chip>
+        <ion-chip class="category-chip" color="danger" outline>
+          <ion-icon name="nutrition-outline"></ion-icon>
+          <ion-label>Vegano</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+    
+    <div class="featured-section">
+      <div class="section-header">
+        <h2>Recetas Destacadas</h2>
+        <ion-button fill="clear" size="small">Ver todas</ion-button>
+      </div>
+      
+      <div class="recipes-grid">
+        <ion-card class="recipe-card">
+          <img src="https://www.recetasnestle.com.mx/sites/default/files/styles/recipe_detail_desktop_new/public/srh_recipes/7e918da02773a54eea60d7bf336d6bb6.webp?itok=vgTIM_VE" />
+          <ion-card-header>
+            <ion-card-title>Pasta Alfredo</ion-card-title>
+            <ion-card-subtitle>Italiana • 30 min</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="recipe-stats">
+              <span><ion-icon name="heart"></ion-icon> 245</span>
+              <span><ion-icon name="star"></ion-icon> 4.8</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card class="recipe-card">
+          <img src="https://www.gourmet.cl/wp-content/uploads/2016/09/EnsaladaCesar2.webp" />
+          <ion-card-header>
+            <ion-card-title>Ensalada César</ion-card-title>
+            <ion-card-subtitle>Ensalada • 15 min</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="recipe-stats">
+              <span><ion-icon name="heart"></ion-icon> 187</span>
+              <span><ion-icon name="star"></ion-icon> 4.6</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card class="recipe-card">
+          <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
+          <ion-card-header>
+            <ion-card-title>Pizza Margherita</ion-card-title>
+            <ion-card-subtitle>Italiana • 40 min</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="recipe-stats">
+              <span><ion-icon name="heart"></ion-icon> 324</span>
+              <span><ion-icon name="star"></ion-icon> 4.9</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card class="recipe-card">
+          <img src="https://www.gourmet.cl/wp-content/uploads/2023/09/SALMON-A-LA-PLANCHA-1.jpg" />
+          <ion-card-header>
+            <ion-card-title>Salmón a la plancha</ion-card-title>
+            <ion-card-subtitle>Pescado • 25 min</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="recipe-stats">
+              <span><ion-icon name="heart"></ion-icon> 198</span>
+              <span><ion-icon name="star"></ion-icon> 4.7</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+    
+    <div class="recent-section">
+      <div class="section-header">
+        <h2>Tus Recetas Recientes</h2>
+        <ion-button fill="clear" size="small">Ver historial</ion-button>
+      </div>
+      
+      <ion-list lines="none">
+        <ion-item class="recent-item">
+          <ion-thumbnail slot="start">
+            <img src="https://newmansown.com/wp-content/uploads/2022/03/Homemade-lasagna.png" />
+          </ion-thumbnail>
+          <ion-label>
+            <h3>Lasagna de carne</h3>
+            <p>Vista hace 2 días</p>
+          </ion-label>
+          <ion-badge color="medium">4.5★</ion-badge>
+        </ion-item>
+        
+        <ion-item class="recent-item">
+          <ion-thumbnail slot="start">
+            <img src="https://www.gourmet.cl/wp-content/uploads/2018/05/Sopa-de-tomate-570x458.jpg" />
+          </ion-thumbnail>
+          <ion-label>
+            <h3>Sopa de tomate</h3>
+            <p>Vista ayer</p>
+          </ion-label>
+          <ion-badge color="medium">4.2★</ion-badge>
+        </ion-item>
+        
+        <ion-item class="recent-item">
+          <ion-thumbnail slot="start">
+            <img src="https://www.recetasderechupete.com/wp-content/uploads/2019/11/Brownie.jpg" />
+          </ion-thumbnail>
+          <ion-label>
+            <h3>Brownie de chocolate</h3>
+            <p>Vista hace 3 días</p>
+          </ion-label>
+          <ion-badge color="medium">4.8★</ion-badge>
+        </ion-item>
+      </ion-list>
+    </div>
+  </ion-content>
+</ion-app>

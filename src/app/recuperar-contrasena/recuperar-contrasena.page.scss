@@ -1,0 +1,70 @@
+.contenedor-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.seccion-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.contenedor-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.img-logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
+}
+
+.nombre-app {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.eslogan-app {
+  font-size: 1em;
+  color: #666;
+  margin-top: 5px;
+}
+
+.form-login {
+  width: 100%;
+  max-width: 350px;
+}
+
+.input-personalizado {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  margin-bottom: 15px;
+}
+
+.btn-login {
+  background-color: #3880ff;
+  color: white;
+  font-weight: bold;
+}
+
+.seccion-registro {
+  margin-top: 15px;
+  width: 100%;
+  max-width: 350px;
+}
+
+.info-version {
+  margin-top: 30px;
+  text-align: center;
+  color: #999;
+  font-size: 0.85em;
+}
+
+ion-toast {
+  --background: #333;
+  --color: #fff;
+}

@@ -1,0 +1,52 @@
+<ion-content>
+  <div class="contenedor-login">
+    <!-- Header con logo -->
+    <div class="seccion-header">
+      <div class="contenedor-logo">
+        <img src="../../assets/img/image.png" alt="Logo" class="img-logo" />
+        <h1 class="nombre-app">Sabores & Recetas</h1>
+        <p class="eslogan-app">Recupera tu acceso y sigue cocinando</p>
+      </div>
+    </div>
+
+    <!-- Formulario de recuperar contraseña -->
+    <form (submit)="recuperarContrasena()" class="form-login">
+      <ion-item class="input-personalizado">
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
+        <ion-input
+          type="email"
+          [(ngModel)]="correo"
+          name="correo"
+          placeholder="tu.email@ejemplo.com"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" type="submit" class="btn-login ion-margin-top">
+        <ion-icon name="send-outline" slot="start"></ion-icon>
+        Enviar enlace de recuperación
+      </ion-button>
+    </form>
+
+    <!-- Volver al login -->
+    <div class="seccion-registro">
+      <ion-button type="button" expand="block" fill="outline" (click)="irALogin()">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Volver al inicio de sesión
+      </ion-button>
+    </div>
+
+    <!-- Info -->
+    <div class="info-version">
+      <span>Versión 1.0.0</span>
+    </div>
+  </div>
+
+  <!-- Toast de confirmación -->
+  <ion-toast
+    [isOpen]="toastAbierto"
+    message="Si el correo existe, recibirás un enlace de recuperación."
+    [duration]="5000"
+    (didDismiss)="toastAbierto = false"
+  ></ion-toast>
+</ion-content>
