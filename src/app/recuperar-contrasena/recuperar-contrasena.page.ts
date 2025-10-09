@@ -4,9 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { 
   IonContent, 
-  IonHeader, 
-  IonTitle, 
-  IonToolbar, 
   IonInput, 
   IonItem, 
   IonButton, 
@@ -23,9 +20,6 @@ import {
     CommonModule,
     FormsModule,
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonInput,
     IonItem,
     IonButton,
@@ -50,7 +44,6 @@ export class RecuperarContrasenaPage implements OnInit {
       return;
     }
 
-  
     console.log('Correo para recuperación:', this.correo);
 
     this.mensajeToast = 'Si el correo existe, recibirás un enlace de recuperación.';

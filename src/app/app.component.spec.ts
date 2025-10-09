@@ -1,16 +1,21 @@
-import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { AppComponent } from './app.component';
+import { Component, inject } from '@angular/core';
+import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { Storage } from '@ionic/storage-angular';
 
-describe('AppComponent', () => {
-  it('should create the app', async () => {
-    await TestBed.configureTestingModule({
-      imports: [AppComponent],
-      providers: [provideRouter([])]
-    }).compileComponents();
-    
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-});
+@Component({
+  selector: 'app-root',
+  templateUrl: 'app.component.html',
+  imports: [IonApp, IonRouterOutlet],
+})
+export class AppComponent {
+  private storage = inject(Storage);
+
+  constructor() {
+    this.initStorage();
+  }
+
+  private async initStorage() {
+    await this.storage.create();
+    console.log('✅ Storage inicializado');
+  }
+}

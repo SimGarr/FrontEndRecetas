@@ -22,7 +22,7 @@ import {
   peopleOutline
 } from 'ionicons/icons';
 import { UsuarioService } from '../Servicios/usuario.service';
-import { Usuario } from '../models/usuario.model';
+import { AuthResponse } from '../models/auth-response.model';
 
 @Component({
   selector: 'app-login',
@@ -63,31 +63,43 @@ export class LoginPage implements OnInit {
     this.contrasena = '';
   }
 
-  iniciarSesion() {
+iniciarSesion() {
     if (!this.correo || !this.contrasena) {
-      this.toastAbierto = true;
-      return;
+        this.toastAbierto = true;
+        return;
     }
 
     this.usuarioService.login(this.correo, this.contrasena).subscribe({
-      next: (usuario: Usuario) => {
-        // Login exitoso
-        localStorage.setItem('usuarioLogeado', 'true');
-        localStorage.setItem('correoUsuario', usuario.email);
-        localStorage.setItem('nombreUsuario', usuario.nombre);
-        this.router.navigateByUrl('/recetas');
-      },
-      error: (error: any) => {
-        console.error('Error al iniciar sesión:', error);
-        this.toastAbierto = true;
-      }
+        next: (res: any) => {
+            if (res.token) {
+                this.usuarioService.saveToken(res.token);
+                localStorage.setItem('usuarioLogeado', 'true');
+                localStorage.setItem('correoUsuario', this.correo);
+                this.router.navigateByUrl('/recetas');
+            } else {
+                alert(res.message || 'Login fallido: token no recibido');
+            }
+        },
+        error: (error: any) => {
+            console.error('Error completo:', error);
+            if (error.error && error.error.message) {
+                alert('Login fallido: ' + error.error.message);
+            } else if (error.status === 0) {
+                alert('No se puede conectar al servidor. Verifica que el backend esté ejecutándose.');
+            } else if (error.status === 403) {
+                alert('Acceso denegado: revisa tus credenciales o configuración de CORS.');
+            } else {
+                alert('Error inesperado: ' + error.statusText);
+            }
+        }
     });
-  }
+}
 
   irARegistro() {
     this.router.navigate(['/registro']);
   }
-    irARecuperarContrasena() {
-      this.router.navigate(['/recuperar-contrasena']);
+
+  irARecuperarContrasena() {
+    this.router.navigate(['/recuperar-contrasena']);
   }
 }
