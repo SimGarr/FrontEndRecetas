@@ -8,7 +8,7 @@ import { Comentario } from '../models/comentario.model';
 })
 export class ComentarioService {
 
-  private apiUrl = 'http://localhost:8080/comentarios';
+  private apiUrl = 'http://98.91.28.114:8081/comentarios';
 
   constructor(private http: HttpClient) { }
 

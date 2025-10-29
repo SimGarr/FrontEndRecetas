@@ -8,7 +8,7 @@ import { Like } from '../models/like.model';
 })
 export class LikeService {
 
-  private apiUrl = 'http://localhost:8080/like';
+  private apiUrl = 'https://apprecetas.duckdns.org/like';
 
   constructor(private http: HttpClient) { }
 

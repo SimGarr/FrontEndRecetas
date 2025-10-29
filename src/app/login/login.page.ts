@@ -8,21 +8,26 @@ import {
   IonInput,
   IonInputPasswordToggle,
   IonContent,
-  IonIcon
+  IonIcon,
+  IonLabel
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import {
-  mailOutline,
-  lockClosedOutline,
-  restaurantOutline,
-  personAddOutline,
-  bookOutline,
-  heartOutline,
-  peopleOutline
+import { 
+  mailOutline, 
+  lockClosedOutline, 
+  restaurantOutline, 
+  personAddOutline, 
+  sunnyOutline, 
+  bookOutline, 
+  heartOutline, 
+  peopleOutline,
+  fingerPrintOutline 
 } from 'ionicons/icons';
 import { UsuarioService } from '../Servicios/usuario.service';
-import { AuthResponse } from '../models/auth-response.model';
+import { AuthService } from '../Servicios/auth.service';
+
+interface AuthResponse { token: string }
 
 @Component({
   selector: 'app-login',
@@ -38,15 +43,22 @@ import { AuthResponse } from '../models/auth-response.model';
     IonInputPasswordToggle,
     IonToast,
     IonContent,
-    IonIcon
+    IonIcon,
+    IonLabel
   ]
 })
 export class LoginPage implements OnInit {
-  correo: string = '';
-  contrasena: string = '';
-  toastAbierto: boolean = false;
+  correo = '';
+  contrasena = '';
+  toastAbierto = false;
+  mensajeToast = '';
+  biometricoDisponible = false;
 
-  constructor(private router: Router, private usuarioService: UsuarioService) {
+  constructor(
+    private router: Router,
+    private usuarioService: UsuarioService,
+    private authService: AuthService,
+  ) {
     addIcons({
       mailOutline,
       lockClosedOutline,
@@ -54,52 +66,99 @@ export class LoginPage implements OnInit {
       personAddOutline,
       bookOutline,
       heartOutline,
-      peopleOutline
+      peopleOutline,
+      sunnyOutline,
+      fingerPrintOutline
     });
   }
 
-  ngOnInit() {
-    this.correo = '';
-    this.contrasena = '';
+  async ngOnInit() {
+    await this.verificarBiometrico();
   }
 
-iniciarSesion() {
+  async verificarBiometrico() {
+    try {
+      this.biometricoDisponible = await this.authService.isBiometricAvailable();
+      console.log('🔐 Biométrico disponible:', this.biometricoDisponible);
+    } catch (error) {
+      console.error('Error verificando biométrico:', error);
+      this.biometricoDisponible = false;
+    }
+  }
+
+  // ✅ Login tradicional
+  async iniciarSesion() {
     if (!this.correo || !this.contrasena) {
-        this.toastAbierto = true;
-        return;
+      this.mostrarToast('Por favor, ingresa correo y contraseña');
+      return;
     }
 
     this.usuarioService.login(this.correo, this.contrasena).subscribe({
-        next: (res: any) => {
-            if (res.token) {
-                this.usuarioService.saveToken(res.token);
-                localStorage.setItem('usuarioLogeado', 'true');
-                localStorage.setItem('correoUsuario', this.correo);
-                this.router.navigateByUrl('/recetas');
-            } else {
-                alert(res.message || 'Login fallido: token no recibido');
-            }
-        },
-        error: (error: any) => {
-            console.error('Error completo:', error);
-            if (error.error && error.error.message) {
-                alert('Login fallido: ' + error.error.message);
-            } else if (error.status === 0) {
-                alert('No se puede conectar al servidor. Verifica que el backend esté ejecutándose.');
-            } else if (error.status === 403) {
-                alert('Acceso denegado: revisa tus credenciales o configuración de CORS.');
-            } else {
-                alert('Error inesperado: ' + error.statusText);
-            }
-        }
-    });
-}
+      next: async (res: AuthResponse) => {
+        const token = res.token;
+        if (token) {
+          // Guardar token y registrar huella para próximos inicios
+          await this.authService.setToken(token, this.correo);
+          await this.authService.saveBiometricCredentials(this.correo, token);
 
-  irARegistro() {
-    this.router.navigate(['/registro']);
+          this.mostrarToast('¡Bienvenido de vuelta! 👨‍🍳');
+          setTimeout(() => this.router.navigateByUrl('/recetas', { replaceUrl: true }), 1000);
+        }
+      },
+      error: (err: any) => this.manejarErrorLogin(err)
+    });
   }
 
-  irARecuperarContrasena() {
-    this.router.navigate(['/recuperar-contrasena']);
+  // ✅ Login con huella digital
+  async iniciarSesionBiometrico() {
+    if (!this.biometricoDisponible) {
+      this.mostrarToast('La autenticación biométrica no está disponible');
+      return;
+    }
+
+    try {
+      this.mostrarToast('🔐 Verificando identidad...');
+      const credentials = await this.authService.authenticateWithBiometric();
+
+      if (credentials) {
+        await this.authService.setToken(credentials.token, credentials.email);
+        const isLoggedIn = await this.authService.isLoggedIn();
+
+        if (isLoggedIn) {
+          this.mostrarToast('¡Huella digital verificada! 👨‍🍳');
+          setTimeout(() => this.router.navigateByUrl('/recetas', { replaceUrl: true }), 1000);
+        } else {
+          this.mostrarToast('Error en la autenticación biométrica');
+        }
+      }
+    } catch (error: any) {
+      console.error('Error en autenticación biométrica:', error);
+
+      if (error.message?.includes('canceled')) {
+        this.mostrarToast('Autenticación cancelada');
+      } else if (error.message?.includes('No hay credenciales guardadas')) {
+        this.mostrarToast('Primero inicia sesión normalmente para registrar tu huella');
+      } else if (error.message?.includes('not enrolled')) {
+        this.mostrarToast('No hay huellas registradas en este dispositivo');
+      } else {
+        this.mostrarToast('Error biométrico: ' + error.message);
+      }
+    }
+  }
+
+  private manejarErrorLogin(error: any) {
+    if (error.status === 401) this.mostrarToast('Contraseña incorrecta');
+    else if (error.status === 404) this.mostrarToast('Usuario no encontrado');
+    else if (error.status === 0) this.mostrarToast('No se puede conectar al servidor');
+    else this.mostrarToast('Error: ' + (error.error?.message || error.message));
+  }
+
+  irARegistro() { this.router.navigate(['/registro']); }
+  irARecuperarContrasena() { this.router.navigate(['/recuperar-contrasena']); }
+
+  mostrarToast(mensaje: string) {
+    this.mensajeToast = mensaje;
+    this.toastAbierto = true;
+    setTimeout(() => (this.toastAbierto = false), 4000);
   }
 }

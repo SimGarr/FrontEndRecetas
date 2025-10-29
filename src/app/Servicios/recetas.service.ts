@@ -8,7 +8,9 @@ import { Receta } from '../models/receta.model';
 })
 export class RecetasService {
 
-  private apiUrl = 'http://localhost:8080/api/recetas';
+  private apiUrl = 'https://apprecetas.duckdns.org/api/recetas';
+  private subidaUrl = 'https://apprecetas.duckdns.org/api/subida/receta';
+  private archivosUrl = 'https://apprecetas.duckdns.org/api/archivos';
 
   constructor(private http: HttpClient) { }
 
@@ -17,13 +19,67 @@ export class RecetasService {
     return localStorage.getItem('authToken');
   }
 
-  // Headers comunes
+  // Headers comunes para JSON
   private getHeaders(): HttpHeaders {
     const token = this.getToken();
     return new HttpHeaders({
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` })
     });
+  }
+
+  // Headers para FormData (sin Content-Type)
+  private getHeadersFormData(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      ...(token && { Authorization: `Bearer ${token}` })
+    });
+  }
+
+  // ==================== SUBIDA DE ARCHIVOS ====================
+
+  /**
+   * Subir receta con archivo (imagen o video)
+   */
+  subirRecetaConArchivo(datosReceta: any, archivo: File): Observable<any> {
+    const formData = new FormData();
+    
+    // Agregar archivo
+    formData.append('archivo', archivo, archivo.name);
+    
+    // Agregar datos de la receta
+    formData.append('nombre', datosReceta.nombre);
+    formData.append('descripcion', datosReceta.descripcion);
+    formData.append('categoria', datosReceta.categoria);
+    formData.append('tiempoPreparacion', datosReceta.tiempoPreparacion.toString());
+
+    return this.http.post(this.subidaUrl, formData, {
+      headers: this.getHeadersFormData()
+    });
+  }
+
+  /**
+   * Obtener URL completa del archivo
+   */
+  obtenerUrlArchivo(nombreArchivo: string): string {
+    return `${this.archivosUrl}/${nombreArchivo}`;
+  }
+
+  /**
+   * Obtener URL de visualización para una receta
+   */
+  obtenerUrlVisualizacion(receta: Receta): string {
+    if (receta.imagenUrl) {
+      // Si es una URL local de nuestro servidor
+      if (receta.imagenUrl.includes('/api/archivos/')) {
+        const nombreArchivo = receta.imagenUrl.split('/').pop();
+        return this.obtenerUrlArchivo(nombreArchivo || '');
+      }
+      // Si es una URL externa
+      return receta.imagenUrl;
+    }
+    // Imagen por defecto
+    return 'assets/images/receta-placeholder.jpg';
   }
 
   // ==================== RECETAS PÚBLICAS ====================
@@ -113,5 +169,37 @@ export class RecetasService {
     return this.http.get<Receta[]>(`${this.apiUrl}/recientes`, {
       headers: this.getHeaders()
     });
+  }
+
+  // ==================== UTILIDADES ====================
+
+  /**
+   * Validar tipo de archivo
+   */
+  validarTipoArchivo(archivo: File): boolean {
+    const tiposPermitidos = [
+      'image/jpeg', 
+      'image/png', 
+      'image/jpg', 
+      'video/mp4', 
+      'video/avi',
+      'video/quicktime'
+    ];
+    return tiposPermitidos.includes(archivo.type);
+  }
+
+  /**
+   * Validar tamaño de archivo (máximo 50MB)
+   */
+  validarTamañoArchivo(archivo: File): boolean {
+    const tamañoMaximo = 50 * 1024 * 1024; // 50MB en bytes
+    return archivo.size <= tamañoMaximo;
+  }
+
+  /**
+   * Obtener tipo de archivo (imagen o video)
+   */
+  obtenerTipoArchivo(archivo: File): string {
+    return archivo.type.startsWith('video/') ? 'video' : 'imagen';
   }
 }

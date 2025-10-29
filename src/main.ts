@@ -1,8 +1,24 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
-import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { Storage } from '@ionic/storage-angular';
+import {
+  RouteReuseStrategy,
+  provideRouter,
+  withPreloading,
+  PreloadAllModules,
+} from '@angular/router';
+import {
+  IonicRouteStrategy,
+  provideIonicAngular,
+} from '@ionic/angular/standalone';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
+import { importProvidersFrom } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
+
+import { IonicStorageModule } from '@ionic/storage-angular';
+import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
@@ -10,25 +26,26 @@ import { JwtInterceptor } from './app/Servicios/jwt.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // 👇 Reutilización de rutas Ionic
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular(),
 
+    // 👇 Configuración base de Ionic + Router
+    provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
 
-    // HttpClient con interceptores desde DI
+    // 👇 HTTP con interceptores declarados
     provideHttpClient(withInterceptorsFromDi()),
 
-    // Proveer Storage manualmente
-    {
-      provide: Storage,
-      useFactory: async () => {
-        const storage = new Storage();
-        await storage.create();
-        return storage;
-      }
-    },
+    // 👇 Soporte de animaciones Angular
+    provideAnimations(),
 
-    // Interceptor registrado para inyección DI
-    JwtInterceptor,
+    // 👇 Configuración global de Ionic Storage
+    importProvidersFrom(IonicStorageModule.forRoot()),
+
+    // 👇 Registro del plugin SQLite Cordova
+    SQLite,
+
+    // 👇 Interceptor JWT correctamente registrado
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],
-});
+}).catch(err => console.error(err));

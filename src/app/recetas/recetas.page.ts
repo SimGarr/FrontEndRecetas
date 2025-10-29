@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
+// Update the path below to the correct location of auth.service.ts
+import { AuthService } from '../Servicios/auth.service';
+
 import { 
   IonApp, 
   IonMenu, 
@@ -44,9 +49,7 @@ import {
   flameOutline,
   nutritionOutline,
   heart,
-  star
-} from 'ionicons/icons';
-import { Router } from '@angular/router';
+  star, cloudUpload, images, folderOpen, trash, restaurant, warning, bookmark, time, documentText } from 'ionicons/icons';
 
 @Component({
   selector: 'app-recetas',
@@ -83,36 +86,20 @@ import { Router } from '@angular/router';
 })
 export class RecetasPage implements OnInit {
 
-   userName: string | null = null;
+  userName: string | null = null;
 
-  constructor(private router: Router) {
-    addIcons({
-      personOutline,
-      statsChartOutline,
-      peopleOutline,
-      bookOutline,
-      settingsOutline,
-      helpCircleOutline,
-      chatboxEllipsesOutline,
-      logOutOutline,
-      notificationsOutline,
-      fastFoodOutline,
-      fishOutline,
-      iceCreamOutline,
-      cafeOutline,
-      flameOutline,
-      nutritionOutline,
-      heart,
-      star
-    });
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private alertController: AlertController
+  ) {
+    addIcons({cloudUpload,images,folderOpen,trash,restaurant,warning,bookmark,time,documentText,personOutline,statsChartOutline,peopleOutline,bookOutline,settingsOutline,helpCircleOutline,chatboxEllipsesOutline,logOutOutline,notificationsOutline,fastFoodOutline,fishOutline,iceCreamOutline,cafeOutline,flameOutline,nutritionOutline,heart,star});
   }
 
   ngOnInit() {
-  
     this.userName = localStorage.getItem('userName');
   }
 
- 
   IrPerfil() { console.log('Ir a perfil'); }
   IrAjustes() { console.log('Ir a ajustes'); }
   IrSeguidores() { console.log('Ir a seguidores'); }
@@ -121,11 +108,34 @@ export class RecetasPage implements OnInit {
   EnviarOpinion() { console.log('Enviar opinión'); }
   IrRecetasVisitadas() { console.log('Ir a recetas visitadas'); }
 
-  logout() {
-    console.log('Cerrando sesión');
-    localStorage.removeItem('userLoggedIn');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userName');
-    this.router.navigateByUrl('/login');
+  // ✅ Logout con confirmación y limpieza total
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Cerrar sesión',
+      message: '¿Seguro que deseas cerrar tu sesión?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Sí, cerrar',
+          handler: async () => {
+            console.log('🚪 Cerrando sesión...');
+            await this.authService.removeToken();
+
+            // Limpia datos locales del usuario
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userName');
+
+            console.log('✅ Sesión cerrada correctamente');
+            this.router.navigateByUrl('/login', { replaceUrl: true });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }

@@ -18,10 +18,16 @@ export const routes: Routes = [
   {
     path: 'recetas',
     loadComponent: () => import('./recetas/recetas.page').then(m => m.RecetasPage),
-    canActivate: [authGuard]  // 🔒 Protegido
+    canActivate: [authGuard]
   },
   {
     path: 'recuperar-contrasena',
     loadComponent: () => import('./recuperar-contrasena/recuperar-contrasena.page').then(m => m.RecuperarContrasenaPage)
+  },
+  {
+    path: 'subir-recetas',
+    loadComponent: () => import('./subir-recetas/subir-recetas.page').then( m => m.SubirRecetasPage),
+    canActivate: [authGuard]
+
   }
 ];

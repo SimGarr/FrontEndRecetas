@@ -1,0 +1,195 @@
+<!-- src/app/subir-recetas/subir-recetas.page.html -->
+<ion-header class="main-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/recetas" text="Atrás" color="primary"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Crear Nueva Receta</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [disabled]="!formularioReceta.valid || !archivoSeleccionado" class="submit-btn">
+        <ion-icon slot="start" name="cloud-upload"></ion-icon>
+        Publicar
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="main-content">
+  <div class="form-container">
+    <!-- Header de la sección -->
+    <div class="form-header">
+      <h1>Comparte tu Receta</h1>
+      <p>Comparte tu creación culinaria con la comunidad</p>
+    </div>
+
+    <!-- Selector de archivo con diseño mejorado -->
+    <div class="file-upload-section">
+      <div class="upload-card" [class.has-file]="vistaPreviaUrl">
+        <input 
+          type="file" 
+          #fileInput
+          (change)="onArchivoSeleccionado($event)"
+          accept="image/*,video/*"
+          class="file-input"
+        />
+        
+        <div class="upload-content" *ngIf="!vistaPreviaUrl">
+          <div class="upload-icon">
+            <ion-icon name="images"></ion-icon>
+          </div>
+          <h3>Agregar Imagen o Video</h3>
+          <p>Haz clic para seleccionar un archivo</p>
+          <small>Formatos: JPG, PNG, MP4 (Máx. 50MB)</small>
+          <ion-button fill="outline" color="primary" (click)="fileInput.click()" class="upload-btn">
+            <ion-icon slot="start" name="folder-open"></ion-icon>
+            Seleccionar Archivo
+          </ion-button>
+        </div>
+
+        <!-- Vista previa mejorada -->
+        <div class="preview-content" *ngIf="vistaPreviaUrl">
+          <div class="preview-header">
+            <h4>Vista Previa</h4>
+            <ion-button fill="clear" color="danger" size="small" (click)="eliminarArchivo()" class="delete-btn">
+              <ion-icon name="trash"></ion-icon>
+            </ion-button>
+          </div>
+          <div class="preview-container">
+            <img 
+              *ngIf="!esVideo" 
+              [src]="vistaPreviaUrl" 
+              alt="Vista previa de la receta"
+              class="preview-image"
+            />
+            <video 
+              *ngIf="esVideo" 
+              [src]="vistaPreviaUrl" 
+              controls
+              class="preview-video"
+            ></video>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario de receta -->
+    <form [formGroup]="formularioReceta" (ngSubmit)="onSubmit()" class="recipe-form">
+      <div class="form-grid">
+        
+        <!-- Nombre de la receta -->
+        <div class="form-group">
+          <ion-item class="form-item" [class.invalid]="formularioReceta.get('nombre')?.invalid && formularioReceta.get('nombre')?.touched">
+            <ion-label position="stacked" class="form-label">
+              <ion-icon name="restaurant" slot="start"></ion-icon>
+              Nombre de la Receta *
+            </ion-label>
+            <ion-input 
+              formControlName="nombre" 
+              type="text" 
+              placeholder="Ej: Paella Valenciana"
+              class="form-input"
+            ></ion-input>
+          </ion-item>
+          <div class="error-message" *ngIf="formularioReceta.get('nombre')?.invalid && formularioReceta.get('nombre')?.touched">
+            <ion-icon name="warning"></ion-icon>
+            El nombre es requerido (mínimo 3 caracteres)
+          </div>
+        </div>
+
+        <!-- Categoría -->
+        <div class="form-group">
+          <ion-item class="form-item" [class.invalid]="formularioReceta.get('categoria')?.invalid && formularioReceta.get('categoria')?.touched">
+            <ion-label position="stacked" class="form-label">
+              <ion-icon name="bookmark" slot="start"></ion-icon>
+              Categoría *
+            </ion-label>
+            <ion-select 
+              formControlName="categoria" 
+              placeholder="Selecciona una categoría"
+              interface="action-sheet"
+              class="form-select"
+            >
+              <ion-select-option *ngFor="let categoria of categorias" [value]="categoria">
+                {{ categoria }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <div class="error-message" *ngIf="formularioReceta.get('categoria')?.invalid && formularioReceta.get('categoria')?.touched">
+            <ion-icon name="warning"></ion-icon>
+            La categoría es requerida
+          </div>
+        </div>
+
+        <!-- Tiempo de preparación -->
+        <div class="form-group">
+          <ion-item class="form-item" [class.invalid]="formularioReceta.get('tiempoPreparacion')?.invalid && formularioReceta.get('tiempoPreparacion')?.touched">
+            <ion-label position="stacked" class="form-label">
+              <ion-icon name="time" slot="start"></ion-icon>
+              Tiempo de Preparación (minutos) *
+            </ion-label>
+            <ion-input 
+              formControlName="tiempoPreparacion" 
+              type="number" 
+              placeholder="30"
+              min="1"
+              class="form-input"
+            ></ion-input>
+          </ion-item>
+          <div class="error-message" *ngIf="formularioReceta.get('tiempoPreparacion')?.invalid && formularioReceta.get('tiempoPreparacion')?.touched">
+            <ion-icon name="warning"></ion-icon>
+            El tiempo de preparación es requerido
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group full-width">
+          <ion-item class="form-item" [class.invalid]="formularioReceta.get('descripcion')?.invalid && formularioReceta.get('descripcion')?.touched">
+            <ion-label position="stacked" class="form-label">
+              <ion-icon name="document-text" slot="start"></ion-icon>
+              Descripción *
+            </ion-label>
+            <ion-textarea 
+              formControlName="descripcion" 
+              rows="5"
+              placeholder="Describe tu receta, ingredientes principales, pasos de preparación..."
+              class="form-textarea"
+            ></ion-textarea>
+          </ion-item>
+          <div class="error-message" *ngIf="formularioReceta.get('descripcion')?.invalid && formularioReceta.get('descripcion')?.touched">
+            <ion-icon name="warning"></ion-icon>
+            La descripción es requerida (mínimo 10 caracteres)
+          </div>
+          <div class="char-counter" *ngIf="formularioReceta.get('descripcion')?.value">
+            {{ formularioReceta.get('descripcion')?.value?.length || 0 }} caracteres
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botón de envío principal -->
+      <div class="submit-section">
+        <ion-button 
+          type="submit" 
+          expand="block" 
+          [disabled]="!formularioReceta.valid || !archivoSeleccionado"
+          class="main-submit-btn"
+          size="large"
+        >
+          <ion-icon slot="start" name="cloud-upload"></ion-icon>
+          Publicar Receta
+        </ion-button>
+        
+        <div class="form-requirements" *ngIf="!formularioReceta.valid || !archivoSeleccionado">
+          <p>Para publicar necesitas:</p>
+          <ul>
+            <li [class.completed]="archivoSeleccionado">📸 Imagen o video de la receta</li>
+            <li [class.completed]="formularioReceta.get('nombre')?.valid">✏️ Nombre de la receta</li>
+            <li [class.completed]="formularioReceta.get('categoria')?.valid">🏷️ Categoría seleccionada</li>
+            <li [class.completed]="formularioReceta.get('tiempoPreparacion')?.valid">⏱️ Tiempo de preparación</li>
+            <li [class.completed]="formularioReceta.get('descripcion')?.valid">📝 Descripción completa</li>
+          </ul>
+        </div>
+      </div>
+    </form>
+  </div>
+</ion-content>

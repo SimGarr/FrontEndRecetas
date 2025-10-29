@@ -1,5 +1,6 @@
 <ion-content>
   <div class="contenedor-login">
+    <!-- 🔹 ENCABEZADO -->
     <div class="seccion-header">
       <div class="contenedor-logo">
         <img src="../../assets/img/image.png" alt="Logo" class="img-logo" />
@@ -8,6 +9,7 @@
       </div>
     </div>
 
+    <!-- 🔹 FORMULARIO DE LOGIN -->
     <form (submit)="iniciarSesion()" class="form-login">
       <ion-item class="input-personalizado">
         <ion-icon name="mail-outline" slot="start"></ion-icon>
@@ -43,6 +45,24 @@
       </ion-button>
     </form>
 
+    <!-- 🔹 BOTÓN BIOMÉTRICO -->
+    <div class="seccion-biometrica" *ngIf="biometricoDisponible">
+      <div class="separador">
+        <span class="texto-separador">o inicia con</span>
+      </div>
+      
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        class="btn-biometrico"
+        (click)="iniciarSesionBiometrico()"
+      >
+        <ion-icon name="fingerprint-outline" slot="start"></ion-icon>
+        Huella Digital
+      </ion-button>
+    </div>
+
+    <!-- 🔹 SECCIÓN REGISTRO -->
     <div class="seccion-registro">
       <span>¿No tienes cuenta?</span>
       <ion-button type="button" expand="block" fill="outline" (click)="irARegistro()">
@@ -51,6 +71,7 @@
       </ion-button>
     </div>
 
+    <!-- 🔹 SECCIÓN DESTACADOS -->
     <div class="seccion-caracteristicas">
       <h3>Desata tu creatividad culinaria</h3>
       <div class="grid-caracteristicas">
@@ -69,6 +90,7 @@
       </div>
     </div>
 
+    <!-- 🔹 INFORMACIÓN DE VERSIÓN -->
     <div class="info-version">
       <span>Versión 1.0.0</span>
     </div>
@@ -76,7 +98,7 @@
 
   <ion-toast
     [isOpen]="toastAbierto"
-    message="Credenciales incorrectas. Inténtalo de nuevo."
+    [message]="mensajeToast"
     [duration]="5000"
     (didDismiss)="toastAbierto = false"
   ></ion-toast>

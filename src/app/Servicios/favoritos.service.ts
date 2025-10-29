@@ -8,7 +8,7 @@ import { Favorito } from '../models/favorito.model';
 })
 export class FavoritoService {
 
-  private apiUrl = 'http://localhost:8080/favoritos';
+  private apiUrl = 'https://apprecetas.duckdns.org/favoritos';
 
   constructor(private http: HttpClient) { }
 
